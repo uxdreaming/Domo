@@ -1,35 +1,73 @@
-# Domo
+# React + TypeScript + Vite
 
-Sistema de vida personal — hábitos, objetivos, proyectos y auditoría de tiempo en una sola interfaz.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Qué es Domo
+Currently, two official plugins are available:
 
-Domo no es una app de productividad. Es la infraestructura que permite invertir el tiempo con intención, medir el impacto de las decisiones a lo largo del tiempo, y recuperar tiempo de calidad para lo que realmente importa.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## Las 4 áreas
+## React Compiler
 
-| Área | Descripción |
-|---|---|
-| **Hábitos** | Sistema Min/Max con cobertura de racha. Los hábitos no mueren — se transforman. |
-| **Objetivos** | Listas de tareas ordenadas y medibles por impacto. |
-| **Proyectos** | Entidades vivas con etapas mutables, documentación del proceso y deep focus. |
-| **Journalist** | Sistema de escritura Markdown — motor reflexivo de todo Domo. |
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Elemento central: 900S
+## Expanding the ESLint configuration
 
-Cada 15 minutos, Domo pregunta: **¿Qué estás haciendo ahora mismo?**
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-Luego de años de uso, se puede ver todo lo que se aprovechó y lo que no. Es un registro honesto de vida.
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-## Stack
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
 
-- Vite + React + TypeScript
-- localStorage (v1)
-- Tailwind CSS
-- Backup automático a este repo via cron jobs
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
 
-## Documentación
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-- [`MEM Domo.md`](./MEM%20Domo.md) — memoria conceptual completa del proyecto
-- [`PRD.md`](./PRD.md) — product requirements document
-- [`mockups/`](./mockups/) — diseños de todas las pantallas
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
+
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
