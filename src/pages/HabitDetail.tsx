@@ -142,7 +142,7 @@ export function HabitDetail() {
   const categoryColor = CATEGORY_COLORS[habit.category] || '#6366f1'
 
   return (
-    <div className="p-10 max-w-[960px] mx-auto">
+    <div className="flex-1 overflow-y-auto p-8" style={{ background: '#0d0e14' }}>
       {/* Back */}
       <button
         onClick={() => navigate('/habitos')}

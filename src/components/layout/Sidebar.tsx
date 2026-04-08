@@ -1,137 +1,114 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 import {
-  LayoutDashboard, Flame, Target, FolderKanban,
-  Timer, PenLine, Settings, Zap
+  LayoutDashboard, Flame, Target, Kanban,
+  Timer, PenLine, Settings, Moon, Pause
 } from 'lucide-react'
-import { useAppStore } from '../../store'
-import { useS900Store } from '../../store'
+import { useAppStore, useS900Store } from '../../store'
 import { format } from 'date-fns'
 
-const navItems = [
-  { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/habitos', icon: Flame, label: 'Hábitos' },
-  { to: '/objetivos', icon: Target, label: 'Objetivos' },
-  { to: '/proyectos', icon: FolderKanban, label: 'Proyectos' },
-  { to: '/900s', icon: Timer, label: '900S' },
-  { to: '/journalist', icon: PenLine, label: 'Journalist' },
-  { to: '/settings', icon: Settings, label: 'Settings' },
+const NAV = [
+  { to: '/',           label: 'Dashboard', icon: LayoutDashboard, color: '#94a3b8' },
+  { to: '/habitos',    label: 'Hábitos',   icon: Flame,           color: '#f97316' },
+  { to: '/objetivos',  label: 'Objetivos', icon: Target,          color: '#eab308' },
+  { to: '/proyectos',  label: 'Proyectos', icon: Kanban,          color: '#22c55e' },
+  { to: '/900s',       label: '900S',      icon: Timer,           color: '#ef4444' },
+  { to: '/journalist', label: 'Journalist',icon: PenLine,         color: '#a855f7' },
+  { to: '/settings',   label: 'Settings',  icon: Settings,        color: '#64748b' },
 ]
 
-const moduleColors: Record<string, string> = {
-  '/': '#6366f1',
-  '/habitos': '#6366f1',
-  '/objetivos': '#f59e0b',
-  '/proyectos': '#22c55e',
-  '/900s': '#ef4444',
-  '/journalist': '#a855f7',
-  '/settings': '#64748b',
-}
-
 export function Sidebar() {
+  const location = useLocation()
   const { mode, activateDeepRest, deactivateDeepRest, activateAFK, deactivateAFK } = useAppStore()
-  const { snapshots } = useS900Store()
-  const now = new Date()
-  const timeLabel = format(now, 'HH:mm')
+  const { snapshots, showPopup } = useS900Store()
 
-  const lastSnap = snapshots.length > 0
-    ? [...snapshots].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())[0]
-    : null
-  const lastSnapTime = lastSnap ? format(new Date(lastSnap.timestamp), 'HH:mm') : timeLabel
+  const todayStr = new Date().toISOString().split('T')[0]
+  const lastSnap = [...snapshots].filter(s => s.timestamp.startsWith(todayStr)).pop()
+  const lastTime = lastSnap ? format(new Date(lastSnap.timestamp), 'HH:mm') : format(new Date(), 'HH:mm')
+
+  const isActive = (to: string) =>
+    to === '/' ? location.pathname === '/' : location.pathname.startsWith(to)
 
   return (
-    <aside className="w-[240px] min-h-screen flex flex-col shrink-0" style={{ background: '#111318', borderRight: '1px solid #1f2333' }}>
+    <aside className="flex flex-col shrink-0 h-screen" style={{ width: 200, background: '#0d0e14', borderRight: '1px solid #1a1c28' }}>
       {/* Logo */}
-      <div className="flex items-center gap-3 px-6 py-6">
-        <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-sm"
-          style={{ background: 'linear-gradient(135deg, #6366f1, #a855f7)' }}>
+      <div className="flex items-center gap-3 px-5 py-5">
+        <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-bold"
+          style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>
           D
         </div>
-        <span className="font-semibold text-white text-base">Domo</span>
+        <span className="text-white font-semibold text-base tracking-tight">Domo</span>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-2 flex flex-col gap-1">
-        {navItems.map(({ to, icon: Icon, label }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={to === '/'}
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150 ${
-                isActive
-                  ? 'text-white'
-                  : 'text-[#64748b] hover:text-[#94a3b8] hover:bg-[#1c1f28]'
-              }`
-            }
-            style={({ isActive }) => isActive ? {
-              background: '#1e2130',
-              color: moduleColors[to] || '#6366f1',
-            } : {}}
-          >
-            {({ isActive }) => (
-              <>
-                <Icon size={16} style={{ color: isActive ? moduleColors[to] : undefined }} />
-                <span>{label}</span>
-              </>
-            )}
-          </NavLink>
-        ))}
+      <nav className="flex flex-col gap-0.5 px-3 flex-1">
+        {NAV.map(({ to, label, icon: Icon, color }) => {
+          const active = isActive(to)
+          return (
+            <NavLink
+              key={to}
+              to={to}
+              className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all"
+              style={{
+                background: active ? '#1a1c28' : 'transparent',
+                color: active ? 'white' : '#4b5563',
+              }}
+            >
+              <Icon size={15} style={{ color: active ? color : '#374151', flexShrink: 0 }} />
+              {label}
+            </NavLink>
+          )
+        })}
       </nav>
 
       {/* Mode buttons */}
-      {mode === 'normal' && (
-        <div className="px-3 pb-4 flex flex-col gap-1">
+      <div className="px-3 pb-3 flex flex-col gap-0.5">
+        {mode !== 'deep_rest' ? (
           <button
             onClick={activateDeepRest}
-            className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs text-[#64748b] hover:text-white hover:bg-[#1c1f28] transition-all w-full text-left"
+            className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs w-full transition-all text-left"
+            style={{ color: '#374151' }}
           >
-            <Zap size={13} style={{ color: '#f59e0b' }} />
+            <Moon size={13} style={{ color: '#374151' }} />
             Deep Rest
           </button>
-          <button
-            onClick={activateAFK}
-            className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs text-[#64748b] hover:text-white hover:bg-[#1c1f28] transition-all w-full text-left"
-          >
-            <span className="w-2 h-2 rounded-full" style={{ background: '#374151' }} />
-            Modo AFK
-          </button>
-        </div>
-      )}
-
-      {mode === 'deep_rest' && (
-        <div className="px-3 pb-4">
+        ) : (
           <button
             onClick={deactivateDeepRest}
-            className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-xs w-full text-left"
-            style={{ background: '#1a1f2e', color: '#f59e0b', border: '1px solid #f59e0b33' }}
+            className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs w-full text-left"
+            style={{ color: '#6366f1', background: '#6366f111' }}
           >
-            <Zap size={12} />
-            Deep Rest activo · Terminar
+            <Moon size={13} style={{ color: '#6366f1' }} />
+            Salir Deep Rest
           </button>
-        </div>
-      )}
-
-      {mode === 'afk' && (
-        <div className="px-3 pb-4">
+        )}
+        {mode !== 'afk' ? (
+          <button
+            onClick={activateAFK}
+            className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs w-full transition-all text-left"
+            style={{ color: '#374151' }}
+          >
+            <Pause size={13} style={{ color: '#374151' }} />
+            AFK
+          </button>
+        ) : (
           <button
             onClick={deactivateAFK}
-            className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-xs w-full text-left"
-            style={{ background: '#1a2020', color: '#22c55e', border: '1px solid #22c55e33' }}
+            className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs w-full text-left"
+            style={{ color: '#f59e0b', background: '#f59e0b11' }}
           >
-            <span className="w-2 h-2 rounded-full bg-[#22c55e]" />
-            AFK activo · Volver
+            <Pause size={13} style={{ color: '#f59e0b' }} />
+            Volver de AFK
           </button>
-        </div>
-      )}
+        )}
+      </div>
 
-      {/* 900S status */}
-      <div className="px-6 py-4 border-t border-[#1f2333]">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#ef4444' }} />
-          <span className="text-[11px] font-mono" style={{ color: '#ef4444' }}>
-            900S activo · {lastSnapTime}
-          </span>
-        </div>
+      {/* 900S Status */}
+      <div className="px-5 py-4" style={{ borderTop: '1px solid #1a1c28' }}>
+        <span className="text-xs font-mono" style={{ color: '#ef4444' }}>
+          <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5 align-middle"
+            style={{ background: showPopup ? '#f59e0b' : '#ef4444' }} />
+          900S activo {lastTime}
+        </span>
       </div>
     </aside>
   )

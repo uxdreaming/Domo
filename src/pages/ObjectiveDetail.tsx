@@ -64,7 +64,7 @@ export function ObjectiveDetail() {
   const statusBg    = { pending: '#1c1f28',   in_progress: '#1a1810',     completed: '#0f1a10' }[objective.status]
 
   return (
-    <div className="p-10 max-w-[1100px] mx-auto">
+    <div className="flex-1 overflow-y-auto p-8" style={{ background: '#0d0e14' }}>
       <button onClick={() => navigate('/objetivos')} className="flex items-center gap-2 text-sm mb-8 hover:text-white transition-colors" style={{ color: '#64748b' }}>
         <ArrowLeft size={14} />
         Objetivos

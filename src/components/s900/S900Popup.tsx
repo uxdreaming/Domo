@@ -59,7 +59,7 @@ export function S900Popup() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}>
-      <div className="w-[480px] rounded-2xl p-8 shadow-2xl" style={{ background: '#161820', border: '1px solid #1f2333' }}>
+      <div className="w-[480px] rounded-2xl p-8 shadow-2xl" style={{ background: '#111218', border: '1px solid #1a1c28' }}>
 
         {/* Header badge */}
         <div className="flex justify-center mb-6">

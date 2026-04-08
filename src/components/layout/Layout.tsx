@@ -6,7 +6,7 @@ export function Layout() {
   return (
     <div className="flex h-screen overflow-hidden">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto" style={{ background: '#0d0f14' }}>
+      <main className="flex-1 min-h-0 overflow-hidden flex flex-col" style={{ background: '#0d0e14' }}>
         <Outlet />
       </main>
       <S900Popup />

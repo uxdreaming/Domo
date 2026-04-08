@@ -5,10 +5,7 @@ import type {
   Project, ProjectStage, ProcessNote,
   S900Snapshot, JournalistEntry, AppSettings, AppMode
 } from '../types'
-import {
-  seedHabits, seedObjectives, seedProjects,
-  seedSnapshots, seedJournalistEntries, defaultSettings
-} from '../data/seed'
+import { defaultSettings } from '../data/seed'
 
 // ─── HABITS STORE ──────────────────────────────────────────────────────────
 
@@ -24,7 +21,7 @@ interface HabitsState {
 export const useHabitsStore = create<HabitsState>()(
   persist(
     (set) => ({
-      habits: seedHabits,
+      habits: [],
       addHabit: (habit) => set((s) => ({ habits: [...s.habits, habit] })),
       updateHabit: (id, updates) => set((s) => ({
         habits: s.habits.map(h => h.id === id ? { ...h, ...updates } : h)
@@ -46,7 +43,7 @@ export const useHabitsStore = create<HabitsState>()(
         )
       })),
     }),
-    { name: 'domo-habits' }
+    { name: 'domo-habits', version: 2 }
   )
 )
 
@@ -64,7 +61,7 @@ interface ObjectivesState {
 export const useObjectivesStore = create<ObjectivesState>()(
   persist(
     (set) => ({
-      objectives: seedObjectives,
+      objectives: [],
       addObjective: (obj) => set((s) => ({ objectives: [...s.objectives, obj] })),
       updateObjective: (id, updates) => set((s) => ({
         objectives: s.objectives.map(o => o.id === id ? { ...o, ...updates } : o)
@@ -81,7 +78,7 @@ export const useObjectivesStore = create<ObjectivesState>()(
         objectives: s.objectives.map(o => o.id === objId ? { ...o, tasks } : o)
       })),
     }),
-    { name: 'domo-objectives' }
+    { name: 'domo-objectives', version: 2 }
   )
 )
 
@@ -101,7 +98,7 @@ interface ProjectsState {
 export const useProjectsStore = create<ProjectsState>()(
   persist(
     (set) => ({
-      projects: seedProjects,
+      projects: [],
       addProject: (p) => set((s) => ({ projects: [...s.projects, p] })),
       updateProject: (id, updates) => set((s) => ({
         projects: s.projects.map(p => p.id === id ? { ...p, ...updates } : p)
@@ -132,7 +129,7 @@ export const useProjectsStore = create<ProjectsState>()(
         )
       })),
     }),
-    { name: 'domo-projects' }
+    { name: 'domo-projects', version: 2 }
   )
 )
 
@@ -152,7 +149,7 @@ interface S900State {
 export const useS900Store = create<S900State>()(
   persist(
     (set) => ({
-      snapshots: seedSnapshots,
+      snapshots: [],
       showPopup: false,
       popupTimestamp: null,
       addSnapshot: (snap) => set((s) => ({ snapshots: [...s.snapshots, snap], showPopup: false })),
@@ -172,7 +169,7 @@ export const useS900Store = create<S900State>()(
         }],
       })),
     }),
-    { name: 'domo-s900' }
+    { name: 'domo-s900', version: 2 }
   )
 )
 
@@ -188,14 +185,14 @@ interface JournalistState {
 export const useJournalistStore = create<JournalistState>()(
   persist(
     (set) => ({
-      entries: seedJournalistEntries,
+      entries: [],
       addEntry: (entry) => set((s) => ({ entries: [...s.entries, entry] })),
       updateEntry: (id, updates) => set((s) => ({
         entries: s.entries.map(e => e.id === id ? { ...e, ...updates } : e)
       })),
       deleteEntry: (id) => set((s) => ({ entries: s.entries.filter(e => e.id !== id) })),
     }),
-    { name: 'domo-journalist' }
+    { name: 'domo-journalist', version: 2 }
   )
 )
 

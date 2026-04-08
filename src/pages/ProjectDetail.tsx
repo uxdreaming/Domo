@@ -104,7 +104,7 @@ export function ProjectDetail() {
   }
 
   return (
-    <div className="p-10 max-w-[1300px] mx-auto">
+    <div className="flex-1 overflow-y-auto p-8" style={{ background: '#0d0e14' }}>
       {/* Header */}
       <div className="flex items-center gap-3 mb-2">
         <button onClick={() => navigate('/proyectos')} className="flex items-center gap-2 text-sm hover:text-white transition-colors" style={{ color: '#64748b' }}>
